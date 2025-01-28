@@ -1,0 +1,23 @@
+dashy_version: 1
+
+title: My Dashboard
+slug: my-dashboard
+
+widgets:
+  - title: Hello, World!
+    variant: primary
+    properties:
+      type: text
+      text: Welcome to Dashy.
+    display:
+      width: 12
+      height: 2
+
+  - title: AI Summary
+    variant: secondary
+    properties:
+      type: question
+      question: "What did Evan write that the steps of an AI Pipeline are?"
+    display:
+      width: 12
+      height: 2

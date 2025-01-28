@@ -15,7 +15,7 @@ function HilightableNavLink({ href, text }: { href: string; text: string }) {
   );
 }
 
-function Sidebar() {
+export default function Sidebar() {
   return (
     <Navbar bg="primary" variant="dark" expand="lg">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -28,5 +28,3 @@ function Sidebar() {
     </Navbar>
   );
 }
-
-export default Sidebar;
