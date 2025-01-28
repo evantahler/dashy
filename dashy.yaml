@@ -13,11 +13,20 @@ widgets:
       width: 12
       height: 2
 
-  - title: AI Summary
+  - title: Document Summary
     variant: secondary
     properties:
       type: question
-      question: "What did Evan write that the steps of an AI Pipeline are?"
+      question: "What did Evan write that the steps of an AI Pipeline are in the Google Drive Document 'The Components of an AI Data Pipeline'?"
+    display:
+      width: 12
+      height: 2
+
+  - title: Users By Month
+    variant: success
+    properties:
+      type: bar_chart
+      question: "What was the created_at date for our users?  Group the results by the year of the created_at date.  Include results for the past 2 years."
     display:
       width: 12
       height: 2

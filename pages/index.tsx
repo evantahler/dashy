@@ -1,4 +1,6 @@
-import { getConfig, DashyConfig, DashyWidget } from "@/dashy";
+import { getConfig } from "@/config";
+import { DashyConfig, DashyWidget, AllDashyWidgetProps } from "@/dashy";
+import BarChartWidget from "@/widgets/bar_chart";
 import QuestionWidget from "@/widgets/question";
 import TextWidget from "@/widgets/text";
 import UnknownWidget from "@/widgets/unknown";
@@ -16,13 +18,15 @@ export default function IndexPage({ config }: { config: DashyConfig }) {
   );
 }
 
-function renderWidget(widget: DashyWidget, index: number) {
+function renderWidget(widget: DashyWidget<any>, index: number) {
   const key = `widget_${index}`;
   switch (widget.properties.type) {
     case "text":
       return <TextWidget key={key} widget={widget} />;
     case "question":
       return <QuestionWidget key={key} widget={widget} />;
+    case "bar_chart":
+      return <BarChartWidget key={key} widget={widget} />;
     default:
       return <UnknownWidget key={key} widget={widget} />;
   }

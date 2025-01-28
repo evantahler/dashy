@@ -1,9 +1,11 @@
-import { DashyWidget } from "@/dashy";
+import { DashyTextWidgetProps, DashyWidget } from "@/dashy";
 import { Card } from "react-bootstrap";
 
-export default function TextWidget({ widget }: { widget: DashyWidget }) {
-  if (widget.properties.type !== "text") throw new Error("Invalid widget type");
-
+export default function TextWidget({
+  widget,
+}: {
+  widget: DashyWidget<DashyTextWidgetProps>;
+}) {
   return (
     <Card bg={widget.variant?.toLowerCase()}>
       <Card.Body>

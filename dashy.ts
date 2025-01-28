@@ -1,8 +1,3 @@
-import { parse } from "yaml";
-import fs from "fs/promises";
-
-const configFile = "./dashy.yaml";
-
 export type DashyVariants =
   | "Primary"
   | "Secondary"
@@ -23,10 +18,20 @@ export type DashyQuestionWidgetProps = {
   question: string;
 };
 
-export type DashyWidget = {
+export type DashyBarChartWidgetProps = {
+  type: "bar_chart";
+  question: string;
+};
+
+export type AllDashyWidgetProps =
+  | DashyTextWidgetProps
+  | DashyQuestionWidgetProps
+  | DashyBarChartWidgetProps;
+
+export type DashyWidget<T extends AllDashyWidgetProps> = {
   title: string;
   variant: DashyVariants;
-  properties: DashyTextWidgetProps | DashyQuestionWidgetProps;
+  properties: T;
   display: {
     height: number;
     width: number;
@@ -37,18 +42,56 @@ export type DashyConfig = {
   dashy_version: number;
   title: string;
   slug: string;
-  widgets: DashyWidget[];
+  widgets: DashyWidget<AllDashyWidgetProps>[];
 };
 
-export async function getConfig() {
-  const content = await fs.readFile(configFile);
-  const yaml: DashyConfig = parse(content.toString());
+export type AirbridgeDataPoint = {
+  x: string;
+  y: number;
+};
 
-  console.log({ yaml });
+export type AirbridgeResponse = {
+  error: string | null;
+  sql: string | null;
+  response: string | null;
+  data: Record<string, AirbridgeDataPoint[]> | null;
+};
 
-  if (yaml.dashy_version !== 1) {
-    throw new Error("Invalid version");
+export async function airbridgeRequest(
+  message: string,
+  stream: boolean = false
+): Promise<AirbridgeResponse> {
+  const airbridge_url = process.env.NEXT_PUBLIC_AIRBRIDGE_URL;
+  const airbridge_api_key = process.env.NEXT_PUBLIC_AIRBRIDGE_API_KEY;
+  const assistant_id = process.env.NEXT_PUBLIC_ASSISTANT_ID;
+  const url = `${airbridge_url}/api/v1/assistants/${assistant_id}/chat/completions`;
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${airbridge_api_key}`,
+  };
+  const body = { messages: [{ content: message, role: "user" }], stream };
+
+  const req = fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+
+  // if (stream) {
+  //   return req;
+  // }
+
+  const response = await req;
+  try {
+    const payload: any = await response.json();
+    const rawMessage = payload.choices[0].message.content;
+    const trimmedMessage = rawMessage
+      .replace(/```json/g, "")
+      .replace(/```.*/g, "");
+    const parsedMessage: AirbridgeResponse = JSON.parse(trimmedMessage);
+    return parsedMessage;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Failed to parse response" + e);
   }
-
-  return yaml;
 }

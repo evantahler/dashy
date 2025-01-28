@@ -7,7 +7,7 @@ export default function Footer() {
         <Row>
           <Col>
             <hr />
-            Footer
+            Hack Day Every Day!
           </Col>
         </Row>
       </Container>

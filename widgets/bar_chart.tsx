@@ -1,18 +1,23 @@
 import { Spinner } from "@/components/spinner";
 import {
+  AirbridgeDataPoint,
   airbridgeRequest,
   AirbridgeResponse,
-  DashyQuestionWidgetProps,
+  DashyBarChartWidgetProps,
   DashyWidget,
 } from "@/dashy";
 import { useEffect, useState } from "react";
-import { Alert, Button, ButtonGroup, Card } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Card, Tooltip } from "react-bootstrap";
 import { ArrowRepeat, InfoCircle } from "react-bootstrap-icons";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, registerables } from "chart.js/auto";
 
-export default function QuestionWidget({
+ChartJS.register(...registerables);
+
+export default function BarChartWidget({
   widget,
 }: {
-  widget: DashyWidget<DashyQuestionWidgetProps>;
+  widget: DashyWidget<DashyBarChartWidgetProps>;
 }) {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<AirbridgeResponse | null>(null);
@@ -48,13 +53,15 @@ export default function QuestionWidget({
         </Card.Text>
         {loading && <Spinner />}
 
-        {response && (
-          <Alert variant={response?.error ? "danger" : widget.variant}>
-            <Alert.Heading>
-              {response?.error || response?.response}
-            </Alert.Heading>
-          </Alert>
+        {response?.error && (
+          <Card.Text>
+            <Alert variant="danger">
+              <Alert.Heading>{response?.error}</Alert.Heading>
+            </Alert>
+          </Card.Text>
         )}
+
+        {response?.data && <BarChartDisplay data={response.data} />}
 
         <ButtonGroup>
           <Button size="sm" onClick={() => fetchData(true)} disabled={loading}>
@@ -67,4 +74,26 @@ export default function QuestionWidget({
       </Card.Body>
     </Card>
   );
+}
+
+function BarChartDisplay({
+  data,
+}: {
+  data: Record<string, AirbridgeDataPoint[]>;
+}) {
+  console.log(data);
+  // assuming only one row returned
+  const keys = Object.keys(data);
+  const chartData = {
+    labels: data[keys[0]].map((point) => point.x),
+    datasets: [{ label: keys[0], data: data[keys[0]].map((point) => point.y) }],
+  };
+  console.log(chartData);
+
+  // const formattedData = Object.entries(data).map(([name, points]) => {
+  //   return points.map((point) => ({ name, x: point.x, y: point.y }));
+  // });
+  // console.log(formattedData);
+
+  return <Bar data={chartData} width={500} height={300} />;
 }
