@@ -9,12 +9,12 @@ import {
 import { useEffect, useState } from "react";
 import { Alert, Button, ButtonGroup, Card, Tooltip } from "react-bootstrap";
 import { ArrowRepeat, InfoCircle } from "react-bootstrap-icons";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from "chart.js/auto";
 
 ChartJS.register(...registerables);
 
-export default function BarChartWidget({
+export default function PieChartWidget({
   widget,
 }: {
   widget: DashyWidget<DashyBarChartWidgetProps>;
@@ -89,5 +89,5 @@ function BarChartDisplay({
     datasets: [{ label: keys[0], data: data[keys[0]].map((point) => point.y) }],
   };
 
-  return <Bar data={chartData} width={500} height={300} />;
+  return <Pie data={chartData} width={500} height={300} />;
 }

@@ -23,10 +23,16 @@ export type DashyBarChartWidgetProps = {
   question: string;
 };
 
+export type DashyPieChartWidgetProps = {
+  type: "bar_chart";
+  question: string;
+};
+
 export type AllDashyWidgetProps =
   | DashyTextWidgetProps
   | DashyQuestionWidgetProps
-  | DashyBarChartWidgetProps;
+  | DashyBarChartWidgetProps
+  | DashyPieChartWidgetProps;
 
 export type DashyWidget<T extends AllDashyWidgetProps> = {
   title: string;
